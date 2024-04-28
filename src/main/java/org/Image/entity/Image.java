@@ -1,4 +1,4 @@
-package Image.entity;
+package org.Image.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
