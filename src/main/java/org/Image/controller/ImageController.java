@@ -11,23 +11,30 @@ import java.io.*;
 @RequestMapping("/image")
 @RestController
 public class ImageController {
+
+
+    @Value("${file.path}")
+    private String path;
+
     private final ImageService imageService;
 
     public ImageController(ImageService imageService){
         this.imageService=imageService;
     }
-   @Value("${upload.dir}")
-    private String fileLoacted;
 
 
     @PostMapping("/upload")
-    public Result testApi(@RequestParam("image") MultipartFile file){
+    public Result testApi(@RequestParam("image") MultipartFile file,@RequestParam("imageId")Integer imageId){
 
         try {
             InputStream inputStream = file.getInputStream();
             BufferedInputStream bufferedInputStream= new BufferedInputStream(inputStream);
             byte[] fileBytes=bufferedInputStream.readAllBytes();
-            FileOutputStream fileOutputStream=new FileOutputStream(new File(fileLoacted+file.getOriginalFilename()));
+            String[] orgFileArr = file.getOriginalFilename().split("\\.");
+            int length = orgFileArr.length;
+
+
+            FileOutputStream fileOutputStream=new FileOutputStream(new File(path+imageId+"."+orgFileArr[length-1]));
               fileOutputStream.write(fileBytes);
 
 
