@@ -1,6 +1,9 @@
 package org.Image.controller;
 
+import org.Image.request.ImageRequest;
 import org.Image.service.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.Image.dto.Result;
@@ -24,42 +27,31 @@ public class ImageController {
         this.imageService=imageService;
     }
 
-
+    private Logger log = LoggerFactory.getLogger(ImageController.class);
     @PostMapping("/upload")
-    public Result testApi(@RequestParam("file") byte[] file,@RequestParam("fileName")String fileName){
-
+    public Result testApi(@RequestBody ImageRequest imageRequest){
         try {
-
-
-
-            FileOutputStream fileOutputStream=new FileOutputStream(new File(path+fileName));
-              fileOutputStream.write(file);
+            FileOutputStream fileOutputStream=new FileOutputStream(new File(path+imageRequest.getFileName()));
+              fileOutputStream.write(imageRequest.getData());
               fileOutputStream.close();
-            System.out.println("success");
         }catch (Exception e){
-            System.out.println(e);
+            log.error("file upload fail...");
         }
-        return new Result();
+        return new Result(SUCCESS);
     }
 
     @PostMapping("/uploadReplace")
     public Result uploadReplaceImage(@RequestParam("image") MultipartFile file,@RequestParam("imageId")Integer imageId){
-
         try {
             InputStream inputStream = file.getInputStream();
             BufferedInputStream bufferedInputStream= new BufferedInputStream(inputStream);
             byte[] fileBytes=bufferedInputStream.readAllBytes();
             String[] orgFileArr = file.getOriginalFilename().split("\\.");
             int length = orgFileArr.length;
-
-
             FileOutputStream fileOutputStream=new FileOutputStream(new File(path+imageId+"."+orgFileArr[length-1]));
             fileOutputStream.write(fileBytes);
-
-
-            System.out.println("success");
         }catch (Exception e){
-            System.out.println(e);
+            log.error("file upload fail...");
         }
         return new Result(SUCCESS);
     }
@@ -73,7 +65,7 @@ public class ImageController {
             File thisFile = new File(path+fileName);
             thisFile.deleteOnExit();
         }catch (Exception e){
-            System.out.println(e);
+            log.error("file delete fail...");
         }
         return new Result(SUCCESS);
     }
