@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
+import static org.Image.constant.Constance.SUCCESS;
+
 @RequestMapping("/image")
 @RestController
 public class ImageController {
@@ -24,7 +26,24 @@ public class ImageController {
 
 
     @PostMapping("/upload")
-    public Result testApi(@RequestParam("image") MultipartFile file,@RequestParam("imageId")Integer imageId){
+    public Result testApi(@RequestParam("file") byte[] file,@RequestParam("fileName")String fileName){
+
+        try {
+
+
+
+            FileOutputStream fileOutputStream=new FileOutputStream(new File(path+fileName));
+              fileOutputStream.write(file);
+              fileOutputStream.close();
+            System.out.println("success");
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return new Result();
+    }
+
+    @PostMapping("/uploadReplace")
+    public Result uploadReplaceImage(@RequestParam("image") MultipartFile file,@RequestParam("imageId")Integer imageId){
 
         try {
             InputStream inputStream = file.getInputStream();
@@ -35,14 +54,28 @@ public class ImageController {
 
 
             FileOutputStream fileOutputStream=new FileOutputStream(new File(path+imageId+"."+orgFileArr[length-1]));
-              fileOutputStream.write(fileBytes);
+            fileOutputStream.write(fileBytes);
 
 
             System.out.println("success");
         }catch (Exception e){
             System.out.println(e);
         }
-        return new Result();
+        return new Result(SUCCESS);
+    }
+
+
+
+    @PostMapping("/delete")
+    public Result deleteFile(@RequestParam("fileName") String fileName){
+        System.out.println(fileName);
+        try {
+            File thisFile = new File(path+fileName);
+            thisFile.deleteOnExit();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return new Result(SUCCESS);
     }
 
     @PostMapping("/test1")

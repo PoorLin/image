@@ -5,6 +5,10 @@ public class Result<T>{
 
     private T data;
 
+    public Result(Integer returnCode) {
+        this.returnCode = returnCode;
+    }
+
     public Integer getReturnCode() {
         return returnCode;
     }
