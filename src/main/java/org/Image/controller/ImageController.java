@@ -63,7 +63,7 @@ public class ImageController {
         System.out.println(fileName);
         try {
             File thisFile = new File(path+fileName);
-            thisFile.deleteOnExit();
+            thisFile.delete();
         }catch (Exception e){
             log.error("file delete fail...");
         }
